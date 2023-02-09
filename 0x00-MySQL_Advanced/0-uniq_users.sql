@@ -1,0 +1,6 @@
+-- Creates a new table users
+CREATE TABLE IF NOT EXISTS user (
+	id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+	email VARCHAR(255) NOT NULL UNIQUE,
+	name VARCHAR(255)
+)
