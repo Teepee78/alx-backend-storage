@@ -72,7 +72,9 @@ def replay(method: Callable):
 
     # Print how many times method was called
     count = redis.get(key)
-    if count is None:
+    try:
+        count = int(c.decode("utf-8"))
+    except Exception:
         count = 0
     print("{} was called {} times".format(key, count.decode("utf8")))
 
