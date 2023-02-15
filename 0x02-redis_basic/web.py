@@ -13,7 +13,7 @@ def tracker(func: Callable) -> Callable:
     redis = redis.Redis()
 
     @wraps(func)
-    def wrapper(url):
+    def wrapper(url: str) -> str:
         """Calls get_page and caches result"""
 
         # Check if cached result exists
