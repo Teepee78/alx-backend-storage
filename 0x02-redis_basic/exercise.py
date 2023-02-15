@@ -23,9 +23,41 @@ def count_calls(method: Callable) -> Callable:
 
     @wraps(method)
     def wrapper(self, data):
-        """Wraps the decorated function and returns the wrapper"""
+        """Increments the counter and calls the method"""
         self._redis.incr(key, 1)
         return method(self, data)
+
+    return wrapper
+
+
+def call_history(method: Callable) -> Callable:
+    """Decorator to store the history of inputs and outputs for a particular function.
+
+    Everytime the original function will be called, we will add its input parameters to one list in redis,
+    and store its output into another list
+
+    Args:
+        method (Callable): method to wrap
+
+    Returns:
+        Callable: Callable
+    """
+
+    input = method.__qualname__ + ":inputs"
+    output = method.__qualname__ + ":outputs"
+
+    @wraps(method)
+    def wrapper(self, *args):
+        """Wrapper function"""
+
+        with self._redis.pipeline() as pipe:
+            for arg in args:
+                pipe.rpush(input, str(arg))
+            pipe.execute()
+
+        ret = method(self, *args)
+        self._redis.rpush(output, ret)
+        return ret
 
     return wrapper
 
@@ -38,6 +70,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """Generates a random key using uuid and stores the data in redis
