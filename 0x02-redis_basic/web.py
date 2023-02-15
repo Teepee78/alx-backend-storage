@@ -6,11 +6,11 @@ from typing import Callable
 import redis
 import requests
 
+redis = redis.Redis()
+
 
 def tracker(func: Callable) -> Callable:
     """Tracks how many times get_page is called"""
-
-    redis = redis.Redis()
 
     @wraps(func)
     def wrapper(url: str) -> str:
