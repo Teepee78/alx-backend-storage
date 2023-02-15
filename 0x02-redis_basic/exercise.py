@@ -72,25 +72,28 @@ def replay(method: Callable):
 
     # Print how many times method was called
     count = redis.get(key)
-    try:
-        count = int(count.decode("utf-8"))
-    except Exception:
-        count = 0
+    # try:
+    # count = int(count.decode("utf-8"))
+    # except Exception:
+    # count = 0
+    count = int(count.decode("utf-8"))
     print("{} was called {} times:".format(key, count.decode("utf-8")))
 
     # Get inputs and outputs
     inputs = redis.lrange("{}:inputs".format(key), 0, -1)
     outputs = redis.lrange("{}:outputs".format(key), 0, -1)
     for inp, outp in zip(inputs, outputs):
-        try:
-            inp = inp.decode("utf-8")
-        except Exception:
-            inp = ""
+        # try:
+        #     inp = inp.decode("utf-8")
+        # except Exception:
+        #     inp = ""
+        inp = inp.decode("utf-8")
 
-        try:
-            outp = outp.decode("utf-8")
-        except Exception:
-            outp = ""
+        # try:
+        #     outp = outp.decode("utf-8")
+        # except Exception:
+        #     outp = ""
+        outp = outp.decode("utf-8")
 
         print("{}(*{}) -> {}".format(key, inp, outp))
 
