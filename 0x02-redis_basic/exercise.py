@@ -66,7 +66,6 @@ def replay(method: Callable):
         method (Callable): method
     """
     redis = redis.Redis()
-    redis.flushdb()
 
     key = method.__qualname__
 
