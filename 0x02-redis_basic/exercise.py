@@ -49,3 +49,35 @@ class Cache:
         if fn is not None:
             return fn(data)
         return data
+
+    def get_str(self, key: str) -> str:
+        """Gets an item from redis using given key
+
+        Args:
+            key (str): key of the item
+
+        Returns:
+            str: item converted to str
+        """
+
+        data = self._redis.get(key)
+        if data is None:
+            return None
+
+        return str(data)
+
+    def get_int(self, key: str) -> int:
+        """Gets an item from redis using given key
+
+        Args:
+            key (str): key of the item
+
+        Returns:
+            int: item converted to int
+        """
+
+        data = self._redis.get(key)
+        if data is None:
+            return None
+
+        return int(data)
