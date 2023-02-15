@@ -6,7 +6,7 @@ from typing import Callable
 import redis
 import requests
 
-redis = redis.Redis()
+store = redis.Redis()
 
 
 def tracker(func: Callable) -> Callable:
@@ -18,7 +18,7 @@ def tracker(func: Callable) -> Callable:
 
         # Check if cached result exists
         cached_key = "cached:{}".format(url)
-        cached_data = redis.get(cached_key)
+        cached_data = store.get(cached_key)
         if cached_data:
             return cached_data.decode("utf-8")
 
@@ -26,10 +26,10 @@ def tracker(func: Callable) -> Callable:
         html = func(url)
         # Increment counter
         count_key = "count:{}".format(url)
-        redis.incr(count_key)
+        store.incr(count_key)
         # Cache result
-        redis.set(cached_key, html)
-        redis.expire(cached_key, 10)
+        store.set(cached_key, html)
+        store.expire(cached_key, 10)
 
         return html
 
