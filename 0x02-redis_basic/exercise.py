@@ -75,7 +75,7 @@ def replay(method: Callable):
         count = int(count.decode("utf-8"))
     except Exception:
         count = 0
-    print("{} was called {} times:".format(key, count.decode("utf8")))
+    print("{} was called {} times:".format(key, count.decode("utf-8")))
 
     # Get inputs and outputs
     inputs = redis.lrange("{}:inputs".format(key), 0, -1)
