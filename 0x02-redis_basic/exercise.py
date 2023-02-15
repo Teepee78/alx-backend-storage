@@ -59,6 +59,38 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
+def replay(method: Callable):
+    """Replays the history of a cached function
+
+    Args:
+        method (Callable): method
+    """
+    redis = redis.Redis()
+    redis.flushdb()
+
+    key = method.__qualname__
+
+    # Print how many times method was called
+    count = redis.get(key)
+    if count is None:
+        count = 0
+    print("{} was called {} times".format(key, count.decode("utf8")))
+
+    # Get inputs and outputs
+    inputs = redis.lrange("{}:inputs".format(key), 0, -1)
+    outputs = redis.lrange("{}:outputs".format(key), 0, -1)
+    for inp, outp in zip(inputs, outputs):
+        try:
+            inp = inp.decode("utf-8")
+        except Exception:
+            inp = ""
+        try:
+            outp = outp.decode("utf-8")
+        except Exception:
+            outp = ""
+        print("{}(*{}) -> {}".format(key, inp, outp))
+
+
 class Cache:
     """Implements a Cache in Redis"""
 
