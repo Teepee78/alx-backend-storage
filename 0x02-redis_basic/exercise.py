@@ -71,28 +71,15 @@ def replay(method: Callable):
     key = method.__qualname__
 
     # Print how many times method was called
-    count = store.get(key)
-    # try:
-    # count = int(count.decode("utf-8"))
-    # except Exception:
-    # count = 0
-    count = count.decode("utf-8")
+    count = store.get(key).decode("utf-8")
     print("{} was called {} times:".format(key, count))
 
     # Get inputs and outputs
     inputs = store.lrange("{}:inputs".format(key), 0, -1)
     outputs = store.lrange("{}:outputs".format(key), 0, -1)
     for inp, outp in zip(inputs, outputs):
-        # try:
-        #     inp = inp.decode("utf-8")
-        # except Exception:
-        #     inp = ""
         inp = inp.decode("utf-8")
 
-        # try:
-        #     outp = outp.decode("utf-8")
-        # except Exception:
-        #     outp = ""
         outp = outp.decode("utf-8")
 
         print("{}(*{}) -> {}".format(key, inp, outp))
