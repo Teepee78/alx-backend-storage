@@ -31,9 +31,11 @@ def count_calls(method: Callable) -> Callable:
 
 
 def call_history(method: Callable) -> Callable:
-    """Decorator to store the history of inputs and outputs for a particular function.
+    """Decorator to store the history of inputs and outputs
+    for a particular function.
 
-    Everytime the original function will be called, we will add its input parameters to one list in redis,
+    Everytime the original function will be called, we will add
+    its input parameters to one list in redis,
     and store its output into another list
 
     Args:
@@ -66,7 +68,6 @@ def replay(method: Callable):
         method (Callable): method
     """
     redis = redis.Redis()
-
     key = method.__qualname__
 
     # Print how many times method was called
@@ -85,10 +86,12 @@ def replay(method: Callable):
             inp = inp.decode("utf-8")
         except Exception:
             inp = ""
+
         try:
             outp = outp.decode("utf-8")
         except Exception:
             outp = ""
+
         print("{}(*{}) -> {}".format(key, inp, outp))
 
 
@@ -122,7 +125,8 @@ class Cache:
 
         Args:
             key (str): key of the item
-            fn (Callable, optional): function to convert item to desired type. Defaults to None.
+            fn (Callable, optional): function to convert item to desired type.
+                Defaults to None.
 
         Returns:
             Any: Converted item or byte
