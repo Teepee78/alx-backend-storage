@@ -14,13 +14,21 @@ def tracker(func: Callable) -> Callable:
 
     @wraps(func)
     def wrapper(url):
-        """Calls get_page and caches url"""
+        """Calls get_page and caches result"""
 
-        key = "count:{}".format(url)
-        redis.incr(key, 1)
-        redis.expire(key, 10)
+        cached_key = "cached:{}".format(url)
+        cached_data = redis.get(cached_key)
+        if cached_data:
+            return cached_data
 
-        return func(url)
+        count_key = "count:{}".format(url)
+        redis.incr(count_key, 1)
+
+        html = func(url)
+        redis.set(cached_key, html)
+        redis.expire(cached_key, 10)
+
+        return html
 
     return wrapper
 
