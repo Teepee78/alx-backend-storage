@@ -50,10 +50,7 @@ def call_history(method: Callable) -> Callable:
     def wrapper(self, *args):
         """Wrapper function"""
 
-        with self._redis.pipeline() as pipe:
-            for arg in args:
-                pipe.rpush(input, str(arg))
-            pipe.execute()
+        self._redis.rpush(input, str(args))
 
         ret = method(self, *args)
         self._redis.rpush(output, ret)
