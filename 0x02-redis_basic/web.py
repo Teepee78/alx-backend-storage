@@ -26,7 +26,7 @@ def tracker(func: Callable) -> Callable:
         html = func(url)
         # Increment counter
         count_key = "count:{}".format(url)
-        redis.incr(count_key, 1)
+        redis.incr(count_key)
         # Cache result
         redis.set(cached_key, html)
         redis.expire(cached_key, 10)
