@@ -16,10 +16,6 @@ def tracker(func: Callable) -> Callable:
     def wrapper(url: str) -> str:
         """Calls get_page and caches result"""
 
-        # Increment counter
-        count_key = "count:{}".format(url)
-        store.incr(count_key)
-
         # Check if cached result exists
         cached_key = "cached:{}".format(url)
         cached_data = store.get(cached_key)
@@ -28,6 +24,9 @@ def tracker(func: Callable) -> Callable:
 
         # Call url and cache result for 10 seconds
         html = func(url)
+        # Increment counter
+        count_key = "count:{}".format(url)
+        store.incr(count_key)
         # Cache result
         store.set(cached_key, html)
         store.expire(cached_key, 10)
