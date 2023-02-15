@@ -3,9 +3,31 @@
 Defines Cache class
 """
 import uuid
+from functools import wraps
 from typing import Any, Callable, Union
 
 import redis
+
+
+def count_calls(method: Callable) -> Callable:
+    """Decorator to count calls to Cache methods
+
+    Args:
+        method (Callable): method
+
+    Returns:
+        Callable: Callable
+    """
+
+    key = method.__qualname__
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """Wraps the decorated function and returns the wrapper"""
+        self._redis.incr(key, 1)
+        return method(self, *args, **kwargs)
+
+    return wrapper
 
 
 class Cache:
@@ -16,6 +38,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """Generates a random key using uuid and stores the data in redis
         using the key
